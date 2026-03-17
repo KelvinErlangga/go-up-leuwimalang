@@ -1,69 +1,109 @@
 "use client";
-import { Zoom } from "react-awesome-reveal";
+
+import { Fade } from "react-awesome-reveal";
 import Image from "next/image";
 
 const AboutUs = () => {
   return (
-    <section className="bg-white"> {/* Latar belakang putih penuh */}
-      <div className="max-w-screen-xl mx-auto py-20 px-8" id="tentang"> {/* Konten dengan padding */}
-        <div className="text-center mb-12">
-          <Zoom triggerOnce>
-            <h2 className="text-2xl md:text-[42px] font-bold text-[#629A1A] leading-snug md:leading-tight">
-              Tentang <span className="font-medium">Go Up Leuwimalang</span>
+    <section
+      className="bg-white relative overflow-hidden"
+    >
+      <div
+        id="tentang"
+        className="max-w-screen-xl mx-auto py-24 px-6 md:px-10"
+      >
+        <div
+          className="text-center mb-16 md:mb-20"
+        >
+          <Fade
+            direction="up"
+            triggerOnce
+          >
+            <h2
+              className="text-3xl md:text-5xl font-extrabold text-gray-900 tracking-tight"
+            >
+              Tentang
+              <span
+                className="text-[#629A1A] ml-2"
+              >
+                Go Up Leuwimalang
+              </span>
             </h2>
-          </Zoom>
+          </Fade>
         </div>
 
-        {/* Mobile Layout: Stack Image on top and text below */}
-        <div className="flex flex-col-reverse md:flex-row justify-between items-start" style={{ gap: "40px" }}>
-          
-          {/* Left Side: Text Content */}
-          <div className="flex-1 space-y-8">
-            <Zoom triggerOnce>
+        <div
+          className="flex flex-col-reverse md:flex-row items-center justify-between gap-12 md:gap-20"
+        >
+          <div
+            className="flex-1 space-y-10"
+          >
+            <Fade
+              direction="up"
+              triggerOnce
+              cascade
+              damping={0.1}
+            >
               <div>
-                <h3 className="text-xl md:text-3xl font-semibold text-[#2F2F2F] leading-snug">
+                <h3
+                  className="text-2xl md:text-3xl font-bold text-gray-900 mb-3"
+                >
                   Edukasi
                 </h3>
-                <p className="text-gray-700 text-sm md:text-xl leading-relaxed">
+                <p
+                  className="text-base md:text-lg text-gray-500 leading-relaxed"
+                >
                   Go Up Leuwimalang adalah platform edukasi online yang dirancang khusus untuk warga Desa Leuwimalang.
                 </p>
               </div>
-            </Zoom>
 
-            <Zoom triggerOnce>
               <div>
-                <h3 className="text-xl md:text-3xl font-semibold text-[#2F2F2F] leading-snug">
+                <h3
+                  className="text-2xl md:text-3xl font-bold text-gray-900 mb-3"
+                >
                   Komitmen
                 </h3>
-                <p className="text-gray-700 text-sm md:text-xl leading-relaxed">
+                <p
+                  className="text-base md:text-lg text-gray-500 leading-relaxed"
+                >
                   Kami berkomitmen untuk memberikan akses mudah ke berbagai kursus yang relevan dengan kehidupan sehari-hari, mulai dari literasi digital, kebersihan lingkungan, hingga keterampilan praktis lainnya.
                 </p>
               </div>
-            </Zoom>
 
-            <Zoom triggerOnce>
               <div>
-                <h3 className="text-xl md:text-3xl font-semibold text-[#2F2F2F] leading-snug">
+                <h3
+                  className="text-2xl md:text-3xl font-bold text-gray-900 mb-3"
+                >
                   Harapan
                 </h3>
-                <p className="text-gray-700 text-sm md:text-xl leading-relaxed">
+                <p
+                  className="text-base md:text-lg text-gray-500 leading-relaxed"
+                >
                   Melalui program ini, kami berharap bisa mendorong perubahan positif, memberdayakan masyarakat, dan meningkatkan kualitas hidup di desa Leuwimalang.
                 </p>
               </div>
-            </Zoom>
+            </Fade>
           </div>
 
-          {/* Right Side: Image */}
-          <div className="flex-1 mb-8 md:mb-0 flex justify-center md:justify-end">
-            <Zoom triggerOnce>
-              <Image
-                src="/assets/images/about.jpg"
-                alt="Tentang Kami"
-                width={300} // Ukuran untuk mobile
-                height={365} // Ukuran untuk mobile
-                className="md:w-[375px] md:h-[456px] object-contain"
-              />
-            </Zoom>
+          <div
+            className="flex-1 w-full flex justify-center md:justify-end"
+          >
+            <Fade
+              direction="up"
+              triggerOnce
+            >
+              <div
+                className="rounded-3xl overflow-hidden shadow-2xl shadow-gray-200/50"
+              >
+                <Image
+                  src="/assets/images/about.jpg"
+                  alt="Tentang Kami"
+                  width={375}
+                  height={456}
+                  className="object-cover transition-transform duration-700 hover:scale-105"
+                />
+              </div>
+            </Fade>
           </div>
         </div>
       </div>

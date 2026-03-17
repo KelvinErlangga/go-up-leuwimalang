@@ -1,23 +1,11 @@
+"use client";
+
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import {
-  Drawer,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-  Divider,
-  Collapse,
-  ListSubheader,
-  IconButton,
-  Toolbar,
-  AppBar,
-  Box,
-  useMediaQuery,
-  useTheme, // Import useTheme dari MUI
-} from "@mui/material";
-import { ExpandLess, ExpandMore, Menu as MenuIcon } from "@mui/icons-material";
-import {
+  Menu as MenuIcon,
+  Close as CloseIcon,
   Home as HomeIcon,
   Dashboard as DashboardIcon,
   Store as StoreIcon,
@@ -27,212 +15,171 @@ import {
   Person as PersonIcon,
   Assignment as AssignmentIcon,
   Chat as ChatIcon,
+  ChevronLeft as ChevronLeftIcon,
+  ChevronRight as ChevronRightIcon,
 } from "@mui/icons-material";
 
-const Sidebar = ({ onSelectMenu }) => {
+const Sidebar = ({ activeRoute, isCollapsed, toggleCollapse }) => {
   const router = useRouter();
-  const [activeMenu, setActiveMenu] = useState("dashboard");
-  const [openPeduliBersih, setOpenPeduliBersih] = useState(false);
-  const [openDigitalReady, setOpenDigitalReady] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const theme = useTheme(); // Mengambil tema menggunakan useTheme
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm")); // Menggunakan theme dari useTheme
-
-  const handleTogglePeduliBersih = () => {
-    setOpenPeduliBersih(!openPeduliBersih);
-  };
-
-  const handleToggleDigitalReady = () => {
-    setOpenDigitalReady(!openDigitalReady);
-  };
-
-  const handleMenuClick = (menu) => {
-    setActiveMenu(menu);
-    if (onSelectMenu) onSelectMenu(menu);
-
-    if (menu === "home") {
+  const handleMenuClick = (routeId) => {
+    if (routeId === "home") {
       router.push("/");
+    } else if (routeId === "dashboard") {
+      router.push("/dashboard");
+    } else if (routeId === "go-up-mart") {
+      router.push("/go-up-mart");
+    } else if (routeId === "diskusi") {
+      router.push("/forum-diskusi");
+    } else if (routeId === "kelas") {
+      router.push("/kelas");
+    } else {
+      router.push(`/${routeId}`);
     }
+    setMobileOpen(false);
   };
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
-  const renderMenuItem = (menu, text, IconComponent) => {
-    const isActive = activeMenu === menu;
+  const MenuItem = ({ id, label, Icon }) => {
+    const isActive = activeRoute === id;
     return (
-      <ListItem
-        button
-        onClick={() => handleMenuClick(menu)}
-        sx={{
-          pl: 4,
-          backgroundColor: isActive ? "#629A1A" : "transparent",
-          color: isActive ? "#EDEDED" : "inherit",
-          "&:hover": {
-            backgroundColor: "#629A1A",
-            color: "#EDEDED",
-          },
-          marginBottom: "10px",
-          borderRadius: "8px",
-        }}
+      <button
+        onClick={() => handleMenuClick(id)}
+        className={`w-full flex items-center ${
+          isCollapsed ? "justify-center px-0" : "space-x-4 px-5"
+        } py-3.5 rounded-2xl transition-all duration-300 ${
+          isActive
+            ? "bg-[#629A1A] text-white shadow-md shadow-[#629A1A]/20"
+            : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+        }`}
+        title={isCollapsed ? label : ""}
       >
-        <ListItemIcon sx={{ color: isActive ? "#EDEDED" : "inherit" }}>
-          <IconComponent />
-        </ListItemIcon>
-        <ListItemText primary={text} primaryTypographyProps={{ fontSize: "16px", fontWeight: 600 }} />
-      </ListItem>
-    );
-  };
-
-  const renderDropdownItem = (menu, text) => {
-    const isActive = activeMenu === menu;
-    return (
-      <ListItem
-        button
-        onClick={() => handleMenuClick(menu)}
-        sx={{
-          pl: 6,
-          backgroundColor: isActive ? "#629A1A" : "transparent",
-          color: isActive ? "#EDEDED" : "inherit",
-          "&:hover": {
-            backgroundColor: "#629A1A",
-            color: "#EDEDED",
-          },
-          marginBottom: "8px",
-          borderRadius: "8px",
-        }}
-      >
-        <ListItemText primary={text} primaryTypographyProps={{ fontSize: "14px", fontWeight: 500 }} />
-      </ListItem>
-    );
-  };
-
-  const drawerContent = (
-    <div>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          mb: 3,
-          mt: 3,
-        }}
-      >
-        <img
-          src="/assets/images/logo.png"
-          alt="Logo"
-          style={{
-            width: isMobile ? "170px" : "274px",
-            height: "auto",
-          }}
+        <Icon
+          className={isActive ? "text-white" : "text-gray-400"}
+          fontSize="small"
         />
-      </Box>
+        {!isCollapsed && (
+          <span className="font-semibold text-[15px]">
+            {label}
+          </span>
+        )}
+      </button>
+    );
+  };
 
-      <Divider />
+  const SidebarContent = (
+    <div
+      className={`flex flex-col h-full bg-white border-r border-gray-100 transition-all duration-300 ${
+        isCollapsed ? "w-[80px]" : "w-[280px]"
+      }`}
+    >
+      <div className="flex items-center justify-center py-6 border-b border-gray-100 relative min-h-[100px]">
+        {isCollapsed ? (
+          <div className="w-10 h-10 rounded-full bg-[#629A1A] flex items-center justify-center text-white font-bold">
+            G
+          </div>
+        ) : (
+          <Image
+            src="/assets/images/logo.png"
+            alt="Logo"
+            width={180}
+            height={180}
+            className="object-contain"
+          />
+        )}
+        
+        <button
+          onClick={toggleCollapse}
+          className="hidden md:flex absolute -right-4 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-white border border-gray-200 rounded-full items-center justify-center text-gray-500 hover:text-[#629A1A] hover:border-[#629A1A] shadow-sm transition-colors z-50"
+        >
+          {isCollapsed ? <ChevronRightIcon fontSize="small" /> : <ChevronLeftIcon fontSize="small" />}
+        </button>
+      </div>
 
-      <List sx={{ fontFamily: "'Poppins', sans-serif" }}>
-        <ListSubheader sx={{ fontSize: "16px", fontWeight: "bold", color: "#444", position: "relative" }}>Menu</ListSubheader>
-        {renderMenuItem("home", "Home", HomeIcon)}
-        {renderMenuItem("dashboard", "Dashboard", DashboardIcon)}
-        {renderMenuItem("go-up-mart", "Go Up Mart", StoreIcon)}
-        {renderMenuItem("diskusi", "Diskusi", ChatIcon)}
+      <div className="flex-1 overflow-y-auto py-6 px-4 space-y-8 scrollbar-hide overflow-x-hidden">
+        <div>
+          {!isCollapsed && (
+            <p className="px-4 text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">
+              Menu
+            </p>
+          )}
+          <div className="space-y-1">
+            <MenuItem id="home" label="Home" Icon={HomeIcon} />
+            <MenuItem id="dashboard" label="Dashboard" Icon={DashboardIcon} />
+            <MenuItem id="go-up-mart" label="Go Up Mart" Icon={StoreIcon} />
+            <MenuItem id="diskusi" label="Diskusi" Icon={ChatIcon} />
+          </div>
+        </div>
 
-        <Divider sx={{ my: 2 }} />
+        <div>
+          {!isCollapsed && (
+            <p className="px-4 text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">
+              Kelas
+            </p>
+          )}
+          <div className="space-y-1">
+            {/* Hanya satu menu Kelas Saya, menggantikan semua dropdown yang memicu 404 */}
+            <MenuItem id="kelas" label="Kelas Saya" Icon={AssignmentIcon} />
+            
+            <MenuItem id="pencapaian" label="Pencapaian" Icon={StarIcon} />
+            <MenuItem id="histori-kelas" label="Histori Kelas" Icon={HistoryIcon} />
+          </div>
+        </div>
 
-        <ListSubheader sx={{ fontSize: "16px", fontWeight: "bold", color: "#444", position: "relative" }}>Kelas</ListSubheader>
-
-        <ListItem button onClick={handleTogglePeduliBersih}>
-          <ListItemIcon sx={{ paddingLeft: "16px" }}>
-            <AssignmentIcon />
-          </ListItemIcon>
-          <ListItemText primary="Peduli Bersih" primaryTypographyProps={{ fontSize: "16px", fontWeight: 600, paddingLeft: "16px" }} />
-          {openPeduliBersih ? <ExpandLess /> : <ExpandMore />}
-        </ListItem>
-        <Collapse in={openPeduliBersih} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            {renderDropdownItem("kebersihan-lingkungan", "1. Pengenalan Kebersihan Lingkungan")}
-            {renderDropdownItem("pengelolaan-sampah", "2. Pengelolaan Sampah yang Benar")}
-            {renderDropdownItem("dampak-polusi", "3. Dampak Polusi dan Cara Menguranginya")}
-            {renderDropdownItem("peran-edukasi", "4. Peran Edukasi dalam Meningkatkan Kesadaran Lingkungan")}
-            {renderDropdownItem("tugas-akhir-lingkungan", "5. Tugas Akhir - Aksi Nyata untuk Lingkungan Bersih")}
-          </List>
-        </Collapse>
-
-        <ListItem button onClick={handleToggleDigitalReady}>
-          <ListItemIcon sx={{ paddingLeft: "16px" }}>
-            <AssignmentIcon />
-          </ListItemIcon>
-          <ListItemText primary="Digital Ready" primaryTypographyProps={{ fontSize: "16px", fontWeight: 600, paddingLeft: "16px" }} />
-          {openDigitalReady ? <ExpandLess /> : <ExpandMore />}
-        </ListItem>
-        <Collapse in={openDigitalReady} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            {renderDropdownItem("digital-ready", "0. Pengenalan Digital Ready")}
-            {renderDropdownItem("literasi-digital", "1. Pengenalan Literasi Digital")}
-            {renderDropdownItem("penggunaan-teknologi", "2. Penggunaan Teknologi Secara Efektif")}
-            {renderDropdownItem("keamanan-privasi", "3. Keamanan dan Privasi di Dunia Digital")}
-            {renderDropdownItem("pemikiran-kritis", "4. Pemikiran Kritis dalam Mengakses Informasi Daring")}
-            {renderDropdownItem("tugas-akhir-digital", "5. Tugas Akhir - Penerapan Literasi Digital")}
-          </List>
-        </Collapse>
-
-        {renderMenuItem("pencapaian", "Pencapaian", StarIcon)}
-        {renderMenuItem("histori-kelas", "Histori Kelas", HistoryIcon)}
-
-        <Divider sx={{ my: 2 }} />
-
-        <ListSubheader sx={{ fontSize: "16px", fontWeight: "bold", color: "#444", position: "relative" }}>Pengguna</ListSubheader>
-        {renderMenuItem("profil", "Profil", PersonIcon)}
-        {renderMenuItem("settings", "Settings", SettingsIcon)}
-      </List>
+        <div>
+          {!isCollapsed && (
+            <p className="px-4 text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">
+              Pengguna
+            </p>
+          )}
+          <div className="space-y-1">
+            <MenuItem id="profil" label="Profil" Icon={PersonIcon} />
+            <MenuItem id="settings" label="Settings" Icon={SettingsIcon} />
+          </div>
+        </div>
+      </div>
     </div>
   );
 
   return (
     <>
-      {/* Hamburger Menu for Mobile */}
-      <AppBar position="fixed" sx={{ display: { sm: "none" }, backgroundColor: "#629A1A" }}>
-        <Toolbar>
-          <IconButton color="inherit" aria-label="open drawer" edge="start" onClick={handleDrawerToggle}>
-            <MenuIcon />
-          </IconButton>
-        </Toolbar>
-      </AppBar>
+      <div className="md:hidden fixed top-0 w-full bg-[#629A1A] text-white z-50 flex items-center px-4 h-16 shadow-md">
+        <button onClick={handleDrawerToggle} className="p-2 -ml-2 rounded-full focus:outline-none focus:bg-white/10">
+          <MenuIcon />
+        </button>
+        <span className="ml-3 font-bold text-lg">Go Up Leuwimalang</span>
+      </div>
 
-      {/* Mobile Drawer */}
-      <Drawer
-        variant="temporary"
-        open={mobileOpen}
-        onClose={handleDrawerToggle}
-        sx={{
-          display: { xs: "block", sm: "none" },
-          "& .MuiDrawer-paper": { boxSizing: "border-box", width: "65%" },
-        }}
-      >
-        {drawerContent}
-      </Drawer>
+      <div
+        className={`fixed inset-0 z-40 bg-gray-900/50 backdrop-blur-sm transition-opacity duration-300 md:hidden ${
+          mobileOpen ? "opacity-100 visible" : "opacity-0 invisible"
+        }`}
+        onClick={handleDrawerToggle}
+      ></div>
 
-      {/* Permanent Sidebar for Larger Screens */}
-      <Drawer
-        variant="permanent"
-        anchor="left"
-        sx={{
-          display: { xs: "none", sm: "block" },
-          "& .MuiDrawer-paper": {
-            width: "412px",
-            display: "flex",
-            flexDirection: "column",
-            overflow: "hidden",
-            overflowY: "auto",
-            backgroundColor: "#fff",
-            "&::-webkit-scrollbar": { display: "none" }, // Hide scrollbar
-          },
-        }}
-        open
+      <div
+        className={`fixed inset-y-0 left-0 z-50 transform transition-transform duration-300 ease-in-out md:hidden ${
+          mobileOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
       >
-        {drawerContent}
-      </Drawer>
+        <div className="w-[280px] h-full">
+          {SidebarContent}
+        </div>
+        <button
+          onClick={handleDrawerToggle}
+          className="absolute top-4 -right-12 p-2 bg-white rounded-full shadow-lg text-gray-600 focus:outline-none"
+        >
+          <CloseIcon fontSize="small" />
+        </button>
+      </div>
+
+      <div className="hidden md:block fixed inset-y-0 left-0 z-40">
+        {SidebarContent}
+      </div>
     </>
   );
 };

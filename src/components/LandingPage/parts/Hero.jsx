@@ -1,4 +1,5 @@
 "use client";
+
 import { useRouter } from "next/navigation";
 import { Fade } from "react-awesome-reveal";
 import Image from "next/image";
@@ -11,44 +12,79 @@ const Hero = () => {
   };
 
   return (
-    <section className="relative w-full h-screen bg-cover bg-center">
-      {/* Gambar Hero dengan overlay gradien */}
-      <div className="absolute inset-0 bg-cover bg-center" id="beranda" style={{ backgroundImage: "url(/assets/images/hero.png)" }}>
+    <section
+      id="beranda"
+      className="relative w-full h-screen min-h-[600px] flex items-center justify-center overflow-hidden"
+    >
+      <div
+        className="absolute inset-0 bg-cover bg-center z-0"
+        style={{
+          backgroundImage: "url(/assets/images/hero.png)"
+        }}
+      >
         <div
-          className="absolute inset-0 bg-gradient-to-r from-black via-black/50 to-transparent opacity-90"
+          className="absolute inset-0 bg-gradient-to-r from-gray-900 via-gray-900/80 to-transparent z-0"
         ></div>
       </div>
 
-      {/* Konten dengan padding */}
-      <div className="max-w-screen-xl mx-auto h-full flex flex-col-reverse md:flex-row items-center justify-between p-10">
-        {/* Left Side: Text Content */}
-        <Fade direction="left" triggerOnce>
-          <div className="text-center md:text-left text-white max-w-md mt-6 md:mt-0">
-            <h1 className="text-3xl md:text-5xl font-bold text-[#629A1A] leading-snug md:leading-tight whitespace-nowrap">Go Up Leuwimalang</h1>
-            <p className="mt-4 text-xl md:text-4xl leading-snug md:leading-snug">
-              Maju Bersama, <br /> Tingkatkan Literasi <br /> dan Kesadaran <br /> Lingkungan
+      <div
+        className="relative z-10 max-w-screen-xl w-full mx-auto px-6 md:px-10 flex flex-col-reverse md:flex-row items-center justify-between"
+      >
+        <Fade
+          direction="up"
+          triggerOnce
+          cascade
+          damping={0.1}
+        >
+          <div
+            className="text-center md:text-left text-white max-w-2xl mt-10 md:mt-0"
+          >
+            <h1
+              className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4"
+            >
+              <span
+                className="text-[#629A1A]"
+              >
+                Go Up
+              </span>
+              {" "}Leuwimalang
+            </h1>
+
+            <h2
+              className="text-2xl md:text-4xl font-semibold text-gray-200 leading-snug mb-6"
+            >
+              Maju Bersama, Tingkatkan Literasi & Kesadaran Lingkungan
+            </h2>
+
+            <p
+              className="text-base md:text-lg text-gray-300 leading-relaxed mb-8 max-w-lg mx-auto md:mx-0"
+            >
+              Bergabunglah dengan kami dan wujudkan perubahan nyata di desa Anda. Langkah kecil untuk dampak yang besar.
             </p>
-            <p className="mt-4 text-sm md:text-xl leading-relaxed md:leading-relaxed">
-              Bergabunglah dengan kami dan wujudkan <br className="hidden md:block" /> perubahan nyata di desa Anda!
-            </p>
+
             <button
-              className="px-4 py-2 md:px-5 md:py-3 mt-4 text-white bg-[#629A1A] rounded-lg transition duration-300 hover:bg-[#5a7d2e] text-sm md:text-base"
               onClick={handleButtonClick}
+              className="px-8 py-3.5 text-[15px] font-semibold text-white bg-[#629A1A] rounded-full shadow-lg transition-all duration-300 hover:bg-[#507e15] hover:shadow-[#629A1A]/30 hover:-translate-y-1"
             >
               Belajar Sekarang
             </button>
           </div>
         </Fade>
 
-        {/* Right Side: Image */}
-        <Fade direction="right" triggerOnce>
-          <div className="flex-shrink-0 mb-6 md:mb-0 mx-auto md:mx-0">
+        <Fade
+          direction="up"
+          triggerOnce
+          delay={200}
+        >
+          <div
+            className="flex-shrink-0 w-56 h-56 md:w-[420px] md:h-[420px] relative drop-shadow-2xl transition-transform duration-500 hover:scale-105 mx-auto md:mx-0"
+          >
             <Image
               src="/assets/images/logo-hero.png"
               alt="Logo Go Up Leuwimalang"
-              width={250}
-              height={250}
-              className="md:w-[457px] md:h-[457px]"
+              fill
+              className="object-contain"
+              priority
             />
           </div>
         </Fade>

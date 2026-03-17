@@ -1,8 +1,10 @@
-import React from 'react';
-import MainLayout from '@/components/Dashboard/MainLayout';
+import MainLayout from "@/components/Dashboard/MainLayout";
+import DashboardContent from "@/components/Dashboard/Menu/Dashboard";
 
-const Dashboard = () => {
-    return <MainLayout />;
-};
-
-export default Dashboard;
+export default function DashboardPage() {
+  return (
+    <MainLayout title="Dashboard" activeRoute="dashboard">
+      <DashboardContent />
+    </MainLayout>
+  );
+}

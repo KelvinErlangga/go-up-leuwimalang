@@ -1,5 +1,6 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
-import { CircularProgress, Box, Typography, Card, CardContent, Grid, Button, CardMedia, Divider } from "@mui/material";
 
 const Dashboard = () => {
   const progress = 43;
@@ -13,314 +14,164 @@ const Dashboard = () => {
 
   useEffect(() => {
     const fetchClassRecommendations = async () => {
-      const response = await fetch("/json/classRecommendations.json");
-      const data = await response.json();
-      setClassRecommendations(data);
+      try {
+        const response = await fetch("/json/classRecommendations.json");
+        const data = await response.json();
+        setClassRecommendations(data);
+      } catch (error) {
+        console.error("Failed to fetch recommendations:", error);
+      }
     };
 
     fetchClassRecommendations();
   }, []);
 
+  // Komponen pembantu untuk Circular Progress menggunakan SVG (Versi yang sudah diperbaiki)
+  const CircularProgress = ({ value, size = 160, strokeWidth = 12, color = "text-[#629A1A]", trackColor = "text-gray-100", textColor = "text-gray-900", textSize = "text-3xl md:text-4xl" }) => {
+    const radius = (size - strokeWidth) / 2;
+    const circumference = radius * 2 * Math.PI;
+    const offset = circumference - (value / 100) * circumference;
+
+    return (
+      <div className="relative flex items-center justify-center shrink-0" style={{ width: size, height: size }}>
+        <svg className="transform -rotate-90 w-full h-full absolute inset-0">
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            stroke="currentColor"
+            strokeWidth={strokeWidth}
+            fill="transparent"
+            className={trackColor}
+          />
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            stroke="currentColor"
+            strokeWidth={strokeWidth}
+            fill="transparent"
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+            strokeLinecap="round"
+            className={`${color} transition-all duration-1000 ease-out`}
+          />
+        </svg>
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          {/* Menambahkan z-10 agar teks selalu di atas lingkaran */}
+          <span className={`${textSize} font-extrabold ${textColor} z-10 drop-shadow-sm`}>{value}%</span>
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <div>
-      <Grid container spacing={2}>
-        <Grid item xs={12} md={4}>
-          {/* Linear Progress */}
-          <Card
-            sx={{
-              borderRadius: "18px",
-              padding: { xs: "20px", md: "45px" }, // Responsive padding
-              backgroundColor: "#FDFAFA",
-              boxShadow: "none",
-              marginBottom: "20px",
-            }}
-          >
-            <Typography variant="h6" sx={{ fontWeight: 600, marginBottom: "20px", fontSize: { xs: "1.2rem", md: "1.5rem" } }}>
-              Progress
-            </Typography>
-            <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
-              <Typography sx={{ marginBottom: 2, fontWeight: 600, fontSize: { xs: "2rem", md: "48px" } }}>{progress}%</Typography>
-              <Box
-                sx={{
-                  width: "100%",
-                  height: "10px",
-                  backgroundColor: "#E0E0E0",
-                  borderRadius: "5px",
-                }}
-              >
-                <Box
-                  sx={{
-                    width: `${progress}%`,
-                    height: "100%",
-                    backgroundColor: "#629A1A",
-                    borderRadius: "5px",
-                  }}
-                />
-              </Box>
-            </Box>
-          </Card>
+    <div className="space-y-6 font-sans">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        {/* Kiri: Progress & Watch Time */}
+        <div className="lg:col-span-1 flex flex-col gap-6">
+          {/* Linear Progress Card */}
+          <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 flex flex-col items-center text-center">
+            <h3 className="text-xl font-bold text-gray-900 mb-6 w-full text-left">Progress Belajar</h3>
+            <div className="w-full flex flex-col items-center py-4">
+              <span className="text-5xl font-extrabold text-gray-900 mb-6">{progress}%</span>
+              <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden">
+                <div 
+                  className="h-full bg-[#629A1A] rounded-full transition-all duration-1000 ease-out"
+                  style={{ width: `${progress}%` }}
+                ></div>
+              </div>
+            </div>
+          </div>
 
-          {/* Watch Time Circular Progress */}
-          <Card
-            sx={{
-              borderRadius: "18px",
-              padding: { xs: "20px", md: "45px" },
-              backgroundColor: "#FDFAFA",
-              boxShadow: "none",
-            }}
-          >
-            <Typography variant="h6" sx={{ fontWeight: 600, marginBottom: "20px", fontSize: { xs: "1.2rem", md: "1.5rem" } }}>
-              Watch Time
-            </Typography>
-            <Box
-              sx={{
-                position: "relative",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <CircularProgress
-                variant="determinate"
-                value={100}
-                size={153}
-                thickness={3.1}
-                sx={{
-                  color: "#E0E0E0",
-                  position: "absolute",
-                }}
-              />
-              <CircularProgress
-                variant="determinate"
-                value={watchTime}
-                size={153}
-                thickness={3.1}
-                sx={{
-                  color: "#629A1A",
-                  zIndex: 1,
-                  "& .MuiCircularProgress-circle": {
-                    strokeLinecap: "round",
-                  },
-                }}
-              />
-              <Typography sx={{ position: "absolute", fontWeight: 600, fontSize: { xs: "2rem", md: "48px" } }}>{watchTime}%</Typography>
-            </Box>
-          </Card>
-        </Grid>
+          {/* Watch Time Card */}
+          <div className="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 flex flex-col items-center">
+            <h3 className="text-xl font-bold text-gray-900 mb-6 w-full text-left">Watch Time</h3>
+            <div className="py-2">
+              <CircularProgress value={watchTime} />
+            </div>
+          </div>
+        </div>
 
-        {/* Right Section (Recommended Classes) */}
-        <Grid item xs={12} md={8}>
-          <Card
-            sx={{
-              borderRadius: "18px",
-              padding: { xs: "20px", md: "40px" },
-              backgroundColor: "#FDFAFA",
-              boxShadow: "none",
-            }}
-          >
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginBottom: "25px",
-              }}
-            >
-              <Typography variant="h6" sx={{ fontWeight: 600, fontSize: { xs: "16px", md: "20px" } }}>
-                Rekomendasi Kelas
-              </Typography>
-              <Typography
-                variant="body2"
-                sx={{
-                  fontWeight: 600,
-                  color: "#629A1A",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
+        {/* Kanan: Rekomendasi Kelas */}
+        <div className="lg:col-span-2">
+          <div className="bg-white rounded-[2rem] p-6 md:p-8 shadow-sm border border-gray-100 h-full flex flex-col">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-xl md:text-2xl font-bold text-gray-900">Rekomendasi Kelas</h3>
+              <button className="text-[#629A1A] font-bold text-sm flex items-center hover:text-[#507e15] transition-colors">
                 Lihat Lanjut
-                <Box
-                  component="img"
-                  src="/assets/icons/ic-arrow.png"
-                  alt="Lihat Lanjut Icon"
-                  sx={{
-                    width: "16px",
-                    height: "16px",
-                    marginLeft: "8px",
-                  }}
-                />
-              </Typography>
-            </Box>
+                <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+              </button>
+            </div>
 
-            {/* Class Cards */}
-            <Grid container spacing={2}>
+            <div className="flex flex-col gap-4 flex-grow">
               {classRecommendations.map((classItem, index) => (
-                <Grid item xs={12} key={index}>
-                  <Box component="a" href={`#dummy-link-${index}`} sx={{ textDecoration: "none" }}>
-                    <Card
-                      sx={{
-                        borderRadius: "18px",
-                        display: "flex",
-                        backgroundColor: "#FFFFFF",
-                        cursor: "pointer",
-                        height: { xs: "100px", md: "auto" }, // Responsif
-                      }}
-                    >
-                      <CardMedia
-                        component="img"
-                        sx={{ width: 120 }} // Lebar gambar disesuaikan
-                        image={classItem.imageUrl}
-                        alt={classItem.title}
-                      />
-                      <CardContent sx={{ padding: "4px", paddingLeft: "10px" }}>
-                        <Typography
-                          variant="h6"
-                          sx={{
-                            fontWeight: 600,
-                            fontSize: { xs: "12px", md: "16px" }, // Responsif
-                            color: "#629A1A",
-                          }}
-                        >
-                          {classItem.title}
-                        </Typography>
-                        <Divider />
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            color: "#666",
-                            fontSize: { xs: "8px", md: "12px" }, // Responsif
-                            marginTop: "3px",
-                          }}
-                        >
-                          {classItem.description}
-                        </Typography>
-                        <Typography variant="h6" sx={{ color: "#FFAA00", marginTop: "4px", fontSize: { xs: "14px", md: "16px" } }}>
-                          ★★★★★
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  </Box>
-                </Grid>
+                <div 
+                  key={index} 
+                  className="group flex flex-col sm:flex-row bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer"
+                >
+                  <div className="w-full sm:w-40 h-32 sm:h-auto overflow-hidden bg-gray-50 flex-shrink-0">
+                    <img 
+                      src={classItem.imageUrl} 
+                      alt={classItem.title} 
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                  </div>
+                  <div className="p-4 md:p-5 flex flex-col justify-center flex-grow">
+                    <h4 className="text-lg font-bold text-[#629A1A] mb-1 line-clamp-1">{classItem.title}</h4>
+                    <p className="text-sm text-gray-500 line-clamp-2 mb-3 leading-relaxed">{classItem.description}</p>
+                    <div className="flex items-center space-x-1 text-[#FFAA00] text-sm">
+                      <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                    </div>
+                  </div>
+                </div>
               ))}
-            </Grid>
-          </Card>
-        </Grid>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        {/* Lanjut Belajar Section */}
-        <Grid item xs={12}>
-          <Card
-            sx={{
-              borderRadius: "18px", // Sama dengan bagian lainnya
-              padding: { xs: "20px", md: "40px" }, // Padding kecil untuk mobile
-              backgroundColor: "#FDFAFA", // Warna latar belakang yang sama
-              boxShadow: "none",
-              marginBottom: "20px",
-            }}
-          >
-            <Typography
-              variant="h6"
-              sx={{
-                fontWeight: 600,
-                marginBottom: "10px",
-                color: "#000000",
-                fontSize: { xs: "1.2rem", md: "1.5rem" }, // Ukuran font lebih kecil di mobile
-              }}
+      {/* Bawah: Lanjut Belajar */}
+      <div className="bg-white rounded-[2rem] p-6 md:p-8 shadow-sm border border-gray-100">
+        <h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-6">Lanjut Belajar</h3>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+          {learningProgress.map((course, index) => (
+            <div 
+              key={index} 
+              className="bg-gradient-to-r from-[#629A1A] to-[#74B320] rounded-[1.5rem] p-5 md:p-6 flex flex-col sm:flex-row items-center justify-between shadow-lg shadow-[#629A1A]/20"
             >
-              Lanjut Belajar
-            </Typography>
-            <Grid container spacing={2}>
-              {learningProgress.map((course, index) => (
-                <Grid item xs={12} key={index}>
-                  <Card
-                    sx={{
-                      borderRadius: "18px",
-                      padding: { xs: "10px", md: "20px" }, // Padding kecil untuk mobile
-                      backgroundColor: "#629A1A",
-                      display: "flex",
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      color: "#FFFFFF",
-                    }}
-                  >
-                    <Box sx={{ display: "flex", alignItems: "center" }}>
-                      <Box sx={{ position: "relative", marginRight: "15px" }}>
-                        {/* Background (abu-abu) */}
-                        <CircularProgress
-                          variant="determinate"
-                          value={100}
-                          size={80} // Ukuran untuk tampilan mobile
-                          thickness={3.1}
-                          sx={{
-                            color: "#87A878",
-                            position: "absolute", // Memastikan background ada di belakang progress
-                          }}
-                        />
+              <div className="flex items-center space-x-4 w-full sm:w-auto mb-4 sm:mb-0">
+                {/* Penyesuaian ukuran SVG Circular Progress di sini */}
+                <div className="flex-shrink-0 relative">
+                  <CircularProgress 
+                    value={course.progress} 
+                    size={64} // Ukuran diperkecil agar tidak memotong teks
+                    strokeWidth={5} 
+                    color="text-white" 
+                    trackColor="text-white/30" 
+                    textColor="text-white"
+                    textSize="text-lg md:text-xl" // Teks diproporsionalkan
+                  />
+                </div>
+                <h4 className="text-white font-bold text-base md:text-lg leading-snug flex-1 pr-2">
+                  {course.title}
+                </h4>
+              </div>
+              <button className="w-full sm:w-auto px-5 py-2.5 bg-white text-[#629A1A] font-bold text-sm rounded-xl shadow-sm hover:bg-gray-50 hover:shadow transition-all whitespace-nowrap shrink-0">
+                Lanjutkan
+              </button>
+            </div>
+          ))}
+        </div>
 
-                        {/* Progress (hijau) */}
-                        <CircularProgress
-                          variant="determinate"
-                          value={course.progress}
-                          size={80} // Ukuran untuk tampilan mobile
-                          thickness={3.1}
-                          sx={{
-                            color: "#FFFFFF", // Warna putih untuk progress
-                            zIndex: 1, // Pastikan progress ada di atas
-                          }}
-                        />
-
-                        <Typography
-                          variant="body1"
-                          sx={{
-                            position: "absolute",
-                            top: "50%",
-                            left: "50%",
-                            transform: "translate(-50%, -50%)",
-                            fontWeight: 600,
-                            fontSize: { xs: "24px", md: "28px" }, // Ukuran font untuk tampilan mobile
-                          }}
-                        >
-                          {course.progress}%
-                        </Typography>
-                      </Box>
-                      <Typography variant="h6" sx={{ fontSize: { xs: "0.8rem", md: "1.4rem" } }}>
-                        {course.title}
-                      </Typography>
-                    </Box>
-                    <Button
-                      variant="contained"
-                      sx={{
-                        backgroundColor: "#FFFFFF",
-                        color: "#629A1A",
-                        fontWeight: 600,
-                        borderRadius: "10px",
-                        fontSize: { xs: "0.4rem", md: "1rem" }, // Ukuran font tombol lebih kecil di mobile
-                      }}
-                    >
-                      Lanjutkan pembelajaran
-                    </Button>
-                  </Card>
-                </Grid>
-              ))}
-            </Grid>
-            {/* Tombol Lihat lebih detail */}
-            <Box sx={{ marginTop: "20px", textAlign: "center" }}>
-              <Button
-                variant="outlined"
-                sx={{
-                  color: "#629A1A",
-                  borderColor: "#629A1A",
-                  fontWeight: 600,
-                  borderRadius: "20px",
-                  fontSize: { xs: "0.8rem", md: "1rem" }, // Ukuran font tombol lebih kecil di mobile
-                }}
-              >
-                Lihat lebih detail
-              </Button>
-            </Box>
-          </Card>
-        </Grid>
-      </Grid>
+        <div className="mt-8 text-center">
+          <button className="px-6 py-2.5 border-2 border-[#629A1A] text-[#629A1A] font-bold rounded-full hover:bg-[#629A1A] hover:text-white transition-colors">
+            Lihat lebih detail
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
